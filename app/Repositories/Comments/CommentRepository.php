@@ -37,16 +37,14 @@ class CommentRepository implements CommentRepositoryInterface
         return $this->model->findOrFail($id);
     }
 
-    public function update(int $id, array $data): Comment
+    public function update(Comment $comment, array $data): Comment
     {
-        $post = $this->model->findOrFail($id);
-        $post->update($data);
-        return $post;
+        $comment->update($data);
+        return $comment;
     }
 
-    public function delete(int $id): bool
+    public function delete(Comment $comment): bool
     {
-        $post = $this->model->findOrFail($id);
-        return (bool) $post->delete();
+        return (bool) $comment->delete();
     }
 }
