@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Comments;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class CreateCommentRequest extends FormRequest
 {
@@ -21,9 +22,15 @@ class CreateCommentRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            'name' => ['sometimes', 'string', 'max:255'],
-            'comment' => ['required', 'string', 'min:3', 'max:2000']
-        ];
+        if (Auth::check()) {
+            return [
+                'comment' => ['required', 'string', 'min:3', 'max:2000']
+            ];
+        } else {
+            return [
+                'name' => ['required', 'string', 'max:255'],
+                'comment' => ['required', 'string', 'min:3', 'max:2000']
+            ];
+        }
     }
 }

@@ -38,7 +38,7 @@ class CommentServiceTest extends TestCase
         $userMock = $this->getUserMockWithId($userId);
         $userMock->shouldReceive('getName')
             ->with()
-            ->andReturn( 'Test name');
+            ->andReturn('Test name');
 
         $commentMock = Mockery::mock(Comment::class);
 
@@ -51,6 +51,10 @@ class CommentServiceTest extends TestCase
             ->andReturn($commentMock);
 
         $auth = Mockery::mock(AuthService::class);
+        $auth->shouldReceive('checkLoggedIn')
+            ->once()
+            ->andReturn(true);
+
         $auth->shouldReceive('getLoggedInUser')
             ->once()
             ->andReturn($userMock);

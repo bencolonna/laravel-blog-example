@@ -26,7 +26,8 @@ class AuthService
         }
     }
 
-    public function logInUser(): User {
+    public function logInUser(): User
+    {
         try {
             return JWTAuth::parseToken()->authenticate();
         } catch (JWTException $ex) {
@@ -35,9 +36,20 @@ class AuthService
         }
     }
 
-    public function getLoggedInUser(): User {
+    public function getLoggedInUser(): User
+    {
         try {
             return Auth::user();
+        } catch (JWTException $ex) {
+            report($ex);
+            throw new AuthException('Failed to get user from session');
+        }
+    }
+
+    public function checkLoggedIn(): bool
+    {
+        try {
+            return Auth::check();
         } catch (JWTException $ex) {
             report($ex);
             throw new AuthException('Failed to get user from session');
