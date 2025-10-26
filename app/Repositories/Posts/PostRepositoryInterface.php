@@ -12,6 +12,6 @@ interface PostRepositoryInterface
     public function paginate(int $perPage = 15): LengthAwarePaginator;
     public function find(int $id): Post;
     public function create(array $data): Post;
-    public function update(int $id, array $data): Post;
-    public function delete(int $id): bool;
+    public function update(Post $post, array $data): Post;
+    public function delete(Post $post): bool;
 }

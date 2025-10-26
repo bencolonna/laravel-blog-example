@@ -33,16 +33,14 @@ class PostRepository implements PostRepositoryInterface
         return $this->model->create($data);
     }
 
-    public function update(int $id, array $data): Post
+    public function update(Post $post, array $data): Post
     {
-        $post = $this->model->findOrFail($id);
         $post->update($data);
         return $post;
     }
 
-    public function delete(int $id): bool
+    public function delete(Post $post): bool
     {
-        $post = $this->model->findOrFail($id);
         return (bool) $post->delete();
     }
 }
