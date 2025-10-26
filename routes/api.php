@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/posts', [PostController::class, 'index']);
@@ -14,3 +15,6 @@ Route::get('/posts/{postId}/comments', [CommentController::class, 'index'])->mid
 Route::post('/posts/{postId}/comments', [CommentController::class, 'create'])->middleware('has-post');
 Route::put('/posts/{postId}/comments/{commentId}', [CommentController::class, 'update'])->middleware('has-post');
 Route::delete('/posts/{postId}/comments/{commentId}', [CommentController::class, 'delete'])->middleware('has-post');
+
+Route::post('/users', [UserController::class, 'create']);
+Route::get('/users/{userId}', [UserController::class, 'show']);
