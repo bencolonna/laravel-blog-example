@@ -1,0 +1,59 @@
+services:
+  blog-database:
+    container_name: blog-database
+    restart: unless-stopped
+    environment:
+      MARIADB_USER: blog
+      MARIADB_PASSWORD: blog
+      MARIADB_ROOT_PASSWORD: blog
+      MARIADB_DATABASE: blog
+    build:
+      context: ./
+      dockerfile: ./docker/local/database/Dockerfile
+    ports:
+      - "3306:3306"
+    networks:
+      - blog-network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    tty: true
+    stdin_open: true
+
+  blog-php-fpm:
+    container_name: blog-php-fpm
+    restart: unless-stopped
+    build:
+      context: ./
+      dockerfile: ./docker/local/php-fpm/Dockerfile
+    volumes:
+      - ./:/home/application/blog:delegated
+    ports:
+      - "9000:9000"
+    networks:
+      - blog-network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    tty: true
+    stdin_open: true
+
+  blog-nginx:
+    container_name: blog-nginx
+    restart: unless-stopped
+    build:
+      context: ./
+      dockerfile: ./docker/local/nginx/Dockerfile
+    volumes:
+      - ./:/home/application/blog:delegated
+    ports:
+      - "80:80"
+    networks:
+      - blog-network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    tty: true
+    stdin_open: true
+
+networks:
+  blog-network:
+    name: blog-network
+    driver: bridge
