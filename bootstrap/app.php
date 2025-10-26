@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\CommentMiddleware;
+use App\Http\Middleware\JwtMiddleware;
 use App\Http\Middleware\PostMiddleware;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\MultipleRecordsFoundException;
@@ -22,6 +23,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
+            'jwt' => JwtMiddleware::class,
             'has-post' => PostMiddleware::class,
             'has-comment' => CommentMiddleware::class,
         ]);
