@@ -5,6 +5,7 @@ namespace App\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Comment extends Model
@@ -16,7 +17,8 @@ class Comment extends Model
     protected $fillable = [
         'name',
         'comment',
-        'post_id'
+        'post_id',
+        'user_id',
     ];
 
     public function getId(): int
@@ -47,5 +49,15 @@ class Comment extends Model
     public function getPost(): Post
     {
         return $this->post;
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
     }
 }

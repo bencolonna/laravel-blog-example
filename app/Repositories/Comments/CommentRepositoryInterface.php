@@ -12,6 +12,6 @@ interface CommentRepositoryInterface
     public function paginateByPost(int $postId, int $perPage = 15): LengthAwarePaginator;
     public function create(array $data): Comment;
     public function find(int $id): Comment;
-    public function update(int $id, array $data): Comment;
-    public function delete(int $id): bool;
+    public function update(Comment $comment, array $data): Comment;
+    public function delete(Comment $comment): bool;
 }

@@ -2,19 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\AuthException;
 use App\Http\Requests\Comments\CreateCommentRequest;
 use App\Http\Requests\Comments\UpdateCommentRequest;
 use App\Http\Resources\Comments\CommentResource;
 use App\Http\Resources\Comments\CommentResourceCollection;
 use App\Repositories\Comments\CommentRepositoryInterface;
+use App\Services\CommentService;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 
 class CommentController extends Controller
 {
-    public function __construct(protected CommentRepositoryInterface $commentRepository)
-    {
+    public function __construct(
+        protected CommentRepositoryInterface $commentRepository,
+        protected CommentService $commentService
+    ) {
 
     }
 
@@ -37,11 +41,8 @@ class CommentController extends Controller
     public function create(CreateCommentRequest $request, int $postId): JsonResponse|CommentResource
     {
         try {
-            $data = $request->validated();
-            $data['post_id'] = $postId;
-
-            $comment = $this->commentRepository
-                ->create($data);
+            $comment = $this->commentService
+                ->createComment( $postId, $request->validated());
 
             return new CommentResource(resource: $comment);
         } catch (Exception $ex) {
@@ -56,14 +57,19 @@ class CommentController extends Controller
     public function update(UpdateCommentRequest $request, int $postId, int $commentId): JsonResponse|CommentResource
     {
         try {
-            $comment = $this->commentRepository
-                ->update($commentId, $request->validated());
+            $comment = $this->commentService
+                ->updateComment( $commentId, $request->validated());
 
             return new CommentResource($comment);
         } catch (ModelNotFoundException $ex) {
             return new JsonResponse(
                 ['error' => 'Could not find comment.'],
                 JsonResponse::HTTP_NOT_FOUND
+            );
+        } catch (AuthException $ex) {
+            return new JsonResponse(
+                ['error' => 'Unauthorized'],
+                JsonResponse::HTTP_UNAUTHORIZED
             );
         } catch (Exception $ex) {
             report($ex);
@@ -77,8 +83,8 @@ class CommentController extends Controller
     public function delete(int $postId, int $commentId): JsonResponse
     {
         try {
-            $result = $this->commentRepository
-                ->delete($commentId);
+            $result = $this->commentService
+                ->deleteComment($commentId);
 
             return new JsonResponse(
                 ['deleted' => $result],
@@ -88,6 +94,11 @@ class CommentController extends Controller
             return new JsonResponse(
                 ['error' => 'Could not find comment.'],
                 JsonResponse::HTTP_NOT_FOUND
+            );
+        } catch (AuthException $ex) {
+            return new JsonResponse(
+                ['error' => 'Unauthorized'],
+                JsonResponse::HTTP_UNAUTHORIZED
             );
         } catch (Exception $ex) {
             report($ex);
