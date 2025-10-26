@@ -17,8 +17,11 @@ class CommentService
 
     public function createComment(int $postId, array $data): Comment
     {
+        $user = $this->authService->getLoggedInUser();
+
+        $data['name'] = $user->getName() ?? $data['name'];
         $data['post_id'] = $postId;
-        $data['user_id'] = $this->authService->getLoggedInUser()->getId();
+        $data['user_id'] = $user->getId();
 
         return $this->commentRepository->create($data);
     }

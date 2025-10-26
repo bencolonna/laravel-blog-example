@@ -22,7 +22,7 @@ class CreateCommentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:255'],
+            'name' => ['sometimes', 'string', 'max:255'],
             'comment' => ['required', 'string', 'min:3', 'max:2000']
         ];
     }
