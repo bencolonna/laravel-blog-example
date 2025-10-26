@@ -7,6 +7,7 @@
 - docker run --rm -v .:/home/application/blog -it blog-cli php ../composer.phar install
 - docker compose up -d
 - docker run --rm --network blog-network -v .:/home/application/blog -it blog-cli php artisan migrate
+- php artisan jwt:secret
 
 ### Run
 - docker compose up -d

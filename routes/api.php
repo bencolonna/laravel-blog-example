@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\UserController;
@@ -18,3 +19,11 @@ Route::delete('/posts/{postId}/comments/{commentId}', [CommentController::class,
 
 Route::post('/users', [UserController::class, 'create']);
 Route::get('/users/{userId}', [UserController::class, 'show']);
+
+Route::post('/login', [AuthController::class, 'login']);
+
+Route::middleware('jwt')->group(function () {
+    Route::get('/logout', [AuthController::class, 'logout']);
+    Route::get('/me', [AuthController::class, 'show']);
+    Route::put('/me', [AuthController::class, 'update']);
+});
