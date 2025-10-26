@@ -42,7 +42,7 @@ class CommentController extends Controller
     {
         try {
             $comment = $this->commentService
-                ->createComment( $postId, $request->validated());
+                ->createComment($postId, $request->validated());
 
             return new CommentResource(resource: $comment);
         } catch (Exception $ex) {
@@ -58,7 +58,7 @@ class CommentController extends Controller
     {
         try {
             $comment = $this->commentService
-                ->updateComment( $commentId, $request->validated());
+                ->updateComment($commentId, $request->validated());
 
             return new CommentResource($comment);
         } catch (ModelNotFoundException $ex) {
