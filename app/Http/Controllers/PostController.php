@@ -2,19 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\AuthException;
 use App\Http\Requests\Posts\CreatePostRequest;
 use App\Http\Requests\Posts\UpdatePostRequest;
 use App\Http\Resources\Posts\PostResource;
 use App\Http\Resources\Posts\PostResourceCollection;
 use App\Repositories\Posts\PostRepositoryInterface;
+use App\Services\PostService;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 
 class PostController extends Controller
 {
-    public function __construct(protected PostRepositoryInterface $postRepository)
-    {
+    public function __construct(
+        protected PostRepositoryInterface $postRepository,
+        protected PostService $postService
+    ) {
 
     }
 
@@ -37,8 +41,8 @@ class PostController extends Controller
     public function create(CreatePostRequest $request): JsonResponse|PostResource
     {
         try {
-            $post = $this->postRepository
-                ->create($request->validated());
+            $post = $this->postService
+                ->createPost($request->validated());
 
             return new PostResource($post);
         } catch (Exception $ex) {
@@ -74,14 +78,19 @@ class PostController extends Controller
     public function update(UpdatePostRequest $request, int $postId): JsonResponse|PostResource
     {
         try {
-            $post = $this->postRepository
-                ->update($postId, $request->validated());
+            $post = $this->postService
+                ->updatePost($postId, $request->validated());
 
             return new PostResource($post);
         } catch (ModelNotFoundException $ex) {
             return new JsonResponse(
                 ['error' => 'Could not find post.'],
                 JsonResponse::HTTP_NOT_FOUND
+            );
+        } catch (AuthException $ex) {
+            return new JsonResponse(
+                ['error' => 'Unauthorized'],
+                JsonResponse::HTTP_UNAUTHORIZED
             );
         } catch (Exception $ex) {
             report($ex);
@@ -95,8 +104,8 @@ class PostController extends Controller
     public function delete(int $postId): JsonResponse
     {
         try {
-            $result = $this->postRepository
-                ->delete($postId);
+            $result = $this->postService
+                ->deletePost($postId);
 
             return new JsonResponse(
                 ['deleted' => $result],
@@ -106,6 +115,11 @@ class PostController extends Controller
             return new JsonResponse(
                 ['error' => 'Could not find post.'],
                 JsonResponse::HTTP_NOT_FOUND
+            );
+        } catch (AuthException $ex) {
+            return new JsonResponse(
+                ['error' => 'Unauthorized'],
+                JsonResponse::HTTP_UNAUTHORIZED
             );
         } catch (Exception $ex) {
             report($ex);

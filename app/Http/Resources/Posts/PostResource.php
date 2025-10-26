@@ -26,7 +26,8 @@ class PostResource extends JsonResource
             'id' => $this->resource->getId(),
             'name' => $this->resource->getTitle(),
             'comment' => $this->resource->getBody(),
-            'created_at' => $this->resource->getCreatedAt()->format('l j F Y H:i:s')
+            'created_at' => $this->resource->getCreatedAt()->format('l j F Y H:i:s'),
+            'created_by' => (($user = $this->resource->getUser()) !== null) ? $user->getName() : 'Unknown',
         ];
     }
 }
