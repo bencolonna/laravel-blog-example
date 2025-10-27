@@ -17,7 +17,7 @@ class CommentRepository implements CommentRepositoryInterface
     {
         return $this->model
             ->where('post_id', '=', $postId)
-            ->all($columns);
+            ->get($columns);
     }
 
     public function paginateByPost(int $postId, int $perPage = 15): LengthAwarePaginator
